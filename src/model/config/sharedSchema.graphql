@@ -1,0 +1,21 @@
+type Error {
+	path: String!
+	message: String!
+}
+
+type Chat {
+	id: String
+	members: [User]
+	messages: [Message]
+}
+
+type Message {
+	id: String
+	text: String
+	sender: User
+}
+
+type User {
+	id: String
+	email: String
+}

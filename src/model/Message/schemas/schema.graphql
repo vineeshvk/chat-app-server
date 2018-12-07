@@ -1,0 +1,15 @@
+# import Error from '../../config/sharedSchema.graphql'
+# import Chat from '../../config/sharedSchema.graphql'
+# import Message from '../../config/sharedSchema.graphql'
+
+type Subscription {
+	getNewMessages(chatId: String): Message
+}
+
+type Query {
+	getMessages(chatId: String): Chat
+}
+
+type Mutation {
+	createMessage(chatId: String, senderId: String, text: String): [Error!]
+}

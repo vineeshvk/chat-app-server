@@ -1,0 +1,19 @@
+{
+	"type": "postgres",
+	"host": "localhost",
+	"port": 5432,
+	"username": "vineesh",
+	"password": "1234",
+	"database": "chap-server",
+	"synchronize": true,
+	"dropSchema": false,
+	"logging": true,
+	"entities": ["src/model/**/entity/*.ts"],
+	"migrations": ["src/migration/**/*.ts"],
+	"subscribers": ["src/subscriber/**/*.ts"],
+	"cli": {
+		"entitiesDir": "src/model/**/entity",
+		"migrationsDir": "src/migration",
+		"subscribersDir": "src/subscriber"
+	}
+}
