@@ -16,12 +16,11 @@ async function createChat(_, { membersId }) {
 }
 
 async function createNewChat(members) {
-	const chat = await Chat.create();
-	console.log(members);
-
-	chat.members = members;
-
+	const chat = await Chat.create({});
 	await chat.save();
+	chat.members = members;
+	await chat.save();
+
 	console.log(chat);
 	return null;
 }

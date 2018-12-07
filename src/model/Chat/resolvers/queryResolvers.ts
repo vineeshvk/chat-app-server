@@ -12,13 +12,19 @@ export const queryResolvers: ResolverMap = {
 async function getChats(_, { userId }) {
 	const user = await getUserRepo();
 	const userChats = user.find(({ id }) => id === userId);
+	console.log(userChats);
+
 	return userChats.chats;
 }
 
 async function getUserRepo() {
 	const userRepo = getRepository(User);
+	console.log(userRepo);
+
 	const user = await userRepo.find({
 		relations: ['chats', 'chats.members']
 	});
+	console.log(user);
+
 	return user;
 }

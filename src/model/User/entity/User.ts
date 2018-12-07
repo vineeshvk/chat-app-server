@@ -21,10 +21,9 @@ export default class User extends BaseEntity {
 	@Column('text')
 	password: string;
 
-	@OneToMany(type => Message, message => message.sender)
-	messages: Message[];
-
-	@ManyToMany(type => Chat, chats => chats.members)
-	@JoinTable()
+	@ManyToMany(type => Chat, chat => chat.members)
 	chats: Chat[];
+
+	@OneToMany(type => Message, messages => messages.sender)
+	messages: Message[];
 }
