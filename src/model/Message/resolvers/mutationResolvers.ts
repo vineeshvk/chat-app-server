@@ -27,7 +27,6 @@ async function createNewMessage(text, sender, chat) {
 
 export async function getAllMessages(chatId: string) {
 	const chats = await getChatRepo();
-	console.log(chats);
 
 	const chatMessages = chats.find(({ id }) => id === chatId);
 	return chatMessages;
