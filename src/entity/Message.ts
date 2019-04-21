@@ -5,8 +5,8 @@ import {
 	ManyToOne,
 	BaseEntity
 } from 'typeorm';
-import { User } from '../../User';
-import { Chat } from '../../Chat';
+import User from './User';
+import Chat from './Chat';
 
 @Entity()
 export default class Message extends BaseEntity {

@@ -1,7 +1,6 @@
-import { compare, hash } from "bcrypt";
+import { compare, hash } from "bcryptjs";
 import * as yup from "yup";
 
-import { User } from "..";
 import {
 	duplicateEmail,
 	invalidEmail,
@@ -11,10 +10,12 @@ import {
 	wrongPassword
 } from "../../config/errorMessages";
 import { formatYupError, returnError } from "../../config/errorHandling";
-import { ResolverMap } from "../../config/graphql-utils";
-import { GQL } from "../schemas/schema";
+import User from '../../entity/User';
 
-export const mutationResolvers: ResolverMap = {
+const resolvers = {
+    Query: {
+		hello: (_, name) => 'hello'
+	},
 	Mutation: {
 		register,
 		login
@@ -22,8 +23,7 @@ export const mutationResolvers: ResolverMap = {
 };
 
 //Mutation Functions
-
-async function register(_, args: GQL.IRegisterOnMutationArguments) {
+async function register(_, args) {
 	try {
 		await registerMutationHelper(args);
 	} catch (error) {
@@ -31,7 +31,7 @@ async function register(_, args: GQL.IRegisterOnMutationArguments) {
 	}
 }
 
-async function login(_, { email, password }: GQL.ILoginOnMutationArguments) {
+async function login(_, { email, password }) {
 	const userExist = await checkUserExists(email);
 	if (!userExist) return returnError("email", noUser);
 
@@ -42,7 +42,6 @@ async function login(_, { email, password }: GQL.ILoginOnMutationArguments) {
 }
 
 //Helper Functions
-
 const validationSchema = yup.object().shape({
 	email: yup
 		.string()
@@ -54,7 +53,7 @@ const validationSchema = yup.object().shape({
 async function registerMutationHelper({
 	email,
 	password
-}: GQL.IRegisterOnMutationArguments) {
+}) {
 	await validationSchema.validate({ email, password }, { abortEarly: false });
 
 	const userExist = await checkUserExists(email);
@@ -76,3 +75,5 @@ async function createUser(email: string, password: string) {
 	}).save();
 	return null;
 }
+
+export default resolvers;

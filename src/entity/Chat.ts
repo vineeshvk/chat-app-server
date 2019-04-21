@@ -6,8 +6,9 @@ import {
 	JoinTable,
 	BaseEntity
 } from 'typeorm';
-import { User } from '../../User';
-import { Message } from '../../Message';
+import Message from './Message';
+import User from './User';
+
 
 @Entity()
 export default class Chat extends BaseEntity {

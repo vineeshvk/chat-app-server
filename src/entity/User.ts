@@ -7,8 +7,9 @@ import {
 	OneToMany,
 	PrimaryGeneratedColumn
 } from 'typeorm';
-import { Chat } from '../../Chat';
-import { Message } from '../../Message';
+import Chat from './Chat';
+import Message from './Message';
+
 
 @Entity('users')
 export default class User extends BaseEntity {
