@@ -1,4 +1,4 @@
-# Graphql server with database starter boilerplate
+# Chat app server using graphql
 
 ### Tools used
 
