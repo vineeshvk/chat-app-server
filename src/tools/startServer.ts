@@ -1,16 +1,16 @@
 import { ApolloServer } from 'apollo-server';
+import { decode } from 'jsonwebtoken';
 import { createConnection } from 'typeorm';
 import { dbconfig } from '../config/ormconfig';
+import User from '../entity/User';
 import schema from './../schema';
 
 export async function startServer(port: number) {
   const server = new ApolloServer({
     schema,
-    context: ({ req }) => {
+    context: async ({ req }) => {
       const token = req.headers.authorization || '';
-      const user = getUser(token);
-      console.log("token",token);
-      
+      const user = await getUser(token);
       return { user };
     },
   });
@@ -25,9 +25,14 @@ export async function startServer(port: number) {
     );
 }
 
-const getUser = (token:string)=>{
-
-}
+const getUser = async (token: string) => {
+  const [Bearer, jwt] = token.split(' ');
+  const userId = decode(jwt);
+  if (!Bearer || !userId) return null;
+  //@ts-ignore
+  const user = await User.findOne({ id: userId.id });
+  return user;
+};
 
 const connectDB = async () => {
   let retry = 10;

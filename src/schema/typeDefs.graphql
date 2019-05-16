@@ -1,38 +1,45 @@
 type Query {
-	hello(name: String): String
-	getChats(userId: String): [Chat]
-	getMessages(chatId: String): Chat
+  hello(name: String): String
+  getChats(userId: String): [Chat]
+  getMessages(chatId: String): Chat
+  getUsers():[User]
 }
 
 type Mutation {
-	register(email: String, password: String): [Error!]
-	login(email: String, password: String): String
-	createChat(membersId: [String]): [Error!]
-	createMessage(chatId: String, senderId: String, text: String): [Error!]
+  register(email: String, password: String): AuthRes
+  login(email: String, password: String): AuthRes
+  createChat(membersId: [String]): Error!
+  createMessage(chatId: String, senderId: String, text: String): Error!
 }
 
 type Subscription {
-	getNewMessages(chatId: String): Message
+  getNewMessages(chatId: String): Message
 }
 
 type Error {
-	path: String!
-	message: String!
+  path: String!
+  message: String!
+}
+
+type AuthRes {
+  error: Error
+  token: String
+  id: String
 }
 
 type Chat {
-	id: String
-	members: [User]
-	messages: [Message]
+  id: String
+  members: [User]
+  messages: [Message]
 }
 
 type Message {
-	id: String
-	text: String
-	sender: User
+  id: String
+  text: String
+  sender: User
 }
 
 type User {
-	id: String
-	email: String
+  id: String
+  email: String
 }

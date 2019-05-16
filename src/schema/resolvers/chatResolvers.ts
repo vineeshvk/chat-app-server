@@ -37,9 +37,9 @@ async function getUserObject(membersId: string[]) {
   return members;
 }
 
-async function getChats(_, { userId }) {
-  const user = await getUserRepo();
-  const userChats = user.find(({ id }) => id === userId);
+async function getChats(_, { userId }, { user }) {
+  const userR = await getUserRepo();
+  const userChats = userR.find(({ id }) => id === userId);
   return userChats.chats;
 }
 

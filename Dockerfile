@@ -4,7 +4,7 @@ FROM node:alpine as builder
 WORKDIR /usr/src/app
 COPY package*.json ./
 
-RUN npm install -dd
+RUN npm install
 
 COPY src ./
 COPY tsconfig.json ./
@@ -21,6 +21,7 @@ RUN npm install --production
 
 COPY --from=builder /usr/src/app/build ./
 COPY src/schema/typeDefs.graphql ./schema/typeDefs.graphql
+COPY .env ./
 
 EXPOSE 3350
 
