@@ -23,17 +23,18 @@ const resolvers = {
 //Query
 /* ---------------------GET_USERS-------------------------- */
 
-async function getUsers(_, {}, { user }) {
+async function getUsers(_, {}, { user }: { user: User }) {
   if (!user) return returnError('getUsers', UN_AUTHROIZED);
 
-  const users = await User.find();
-  return users;
+  let users = await User.find();
+  users = users.filter(us => us.id !== user.id);
+  return { users };
 }
 
 //Mutation
 /* --------------------REGISTER-------------------------- */
 
-async function register(_, { email, password }) {
+async function register(_, { email, password, name }) {
   const userExist = await User.findOne({ email });
   if (userExist) return returnError('email', DUPLICATE_USER);
 
@@ -41,6 +42,7 @@ async function register(_, { email, password }) {
   const user = await User.create({
     email,
     password: hashedPassword,
+    name,
   }).save();
   const token = sign({ id: user.id }, process.env.JWT_SECRET_TOKEN);
 

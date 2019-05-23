@@ -1,4 +1,7 @@
 import { getRepository } from 'typeorm';
+import { contextType } from '..';
+import { returnError } from '../../config/errorHandling';
+import { UN_AUTHROIZED } from '../../config/errorMessages';
 import Chat from '../../entity/Chat';
 import User from '../../entity/User';
 
@@ -11,16 +14,21 @@ const resolvers = {
   },
 };
 
-async function createChat(_, { membersId }) {
+async function createChat(_, { membersId, name }, { user }: contextType) {
+  if (!user) return returnError('createChat', UN_AUTHROIZED);
+
   const members = await getUserObject(membersId);
 
-  return await createNewChat(members);
+  return await createNewChat([...members, user], name);
 }
 
-async function createNewChat(members) {
+async function createNewChat(members: User[], name?: string) {
   const chat = await Chat.create({});
   await chat.save();
+
   chat.members = members;
+  if (name) chat.name = name;
+
   await chat.save();
 
   return null;
@@ -37,20 +45,28 @@ async function getUserObject(membersId: string[]) {
   return members;
 }
 
-async function getChats(_, { userId }, { user }) {
-  const userR = await getUserRepo();
-  const userChats = userR.find(({ id }) => id === userId);
-  return userChats.chats;
+async function getChats(_, {}, { user }: contextType) {
+  const userR = await getUserRepo(user.id);
+  // const userChats = userR.find(({ id }) => id === user.id);
+  const chats = userR.chats.map(chat => {
+    if (!chat.name) {
+      const mem = chat.members.filter(member => member.id !== user.id)[0];
+      return { ...chat, name: mem.email };
+    }
+    return chat;
+  });
+  return chats;
 }
 
-async function getUserRepo() {
+async function getUserRepo(userId) {
   const userRepo = getRepository(User);
 
   const user = await userRepo.find({
     relations: ['chats', 'chats.members'],
+    where: { id: userId },
   });
 
-  return user;
+  return user[0];
 }
 
 export default resolvers;

@@ -1,30 +1,31 @@
 import {
-	BaseEntity,
-	Column,
-	Entity,
-	JoinTable,
-	ManyToMany,
-	OneToMany,
-	PrimaryGeneratedColumn
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import Chat from './Chat';
 import Message from './Message';
 
-
 @Entity('users')
 export default class User extends BaseEntity {
-	@PrimaryGeneratedColumn('uuid')
-	id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-	@Column({ unique: true })
-	email: string;
+  @Column({ nullable: true })
+  name: String;
 
-	@Column('text')
-	password: string;
+  @Column({ unique: true })
+  email: string;
 
-	@ManyToMany(type => Chat, chat => chat.members)
-	chats: Chat[];
+  @Column('text')
+  password: string;
 
-	@OneToMany(type => Message, messages => messages.sender)
-	messages: Message[];
+  @ManyToMany(type => Chat, chat => chat.members)
+  chats: Chat[];
+
+  @OneToMany(type => Message, messages => messages.sender)
+  messages: Message[];
 }

@@ -1,19 +1,24 @@
 type Query {
   hello(name: String): String
-  getChats(userId: String): [Chat]
-  getMessages(chatId: String): Chat
-  getUsers():[User]
+  getChats: [Chat]
+  getMessages(chatId: String!): Chat
+  getUsers: UserRes
 }
 
 type Mutation {
-  register(email: String, password: String): AuthRes
-  login(email: String, password: String): AuthRes
-  createChat(membersId: [String]): Error!
-  createMessage(chatId: String, senderId: String, text: String): Error!
+  register(name:String!,email: String!, password: String!): AuthRes
+  login(email: String!, password: String!): AuthRes
+  createChat(membersId: [String]!, name: String): Error!
+  createMessage(chatId: String!, text: String!): Error!
 }
 
 type Subscription {
   getNewMessages(chatId: String): Message
+}
+
+type UserRes {
+  users: [User]
+  error: Error
 }
 
 type Error {
@@ -31,15 +36,19 @@ type Chat {
   id: String
   members: [User]
   messages: [Message]
+  name: String
+  lastMessage: String
 }
 
 type Message {
   id: String
   text: String
   sender: User
+  me: Boolean
 }
 
 type User {
   id: String
+  name:String
   email: String
 }

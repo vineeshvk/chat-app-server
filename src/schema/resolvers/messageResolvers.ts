@@ -1,9 +1,10 @@
 import { PubSub, withFilter } from 'apollo-server';
 import { getRepository } from 'typeorm';
-import Chat from '../../entity/Chat'
-import User from '../../entity/User'
-import Message from '../../entity/Message'
-
+import { contextType } from '..';
+import { returnError } from '../../config/errorHandling';
+import { UN_AUTHROIZED } from '../../config/errorMessages';
+import Chat from '../../entity/Chat';
+import Message from '../../entity/Message';
 
 const resolvers = {
   Mutation: {
@@ -19,32 +20,21 @@ const resolvers = {
   },
 };
 
-async function createMessage(_, { chatId, senderId, text }) {
-  const sender = await User.findOne({ id: senderId });
-  const chat = await Chat.findOne({ id: chatId });
-  const newMessage = await createNewMessage(text, sender, chat);
+async function createMessage(_, { chatId, text }, { user }: contextType) {
+  if (!user) return returnError('createMessage', UN_AUTHROIZED);
 
-  return triggerSubscription(senderId, chatId, newMessage);
+  const chat = await Chat.findOne({ id: chatId });
+  chat.lastMessage = text;
+
+  const newMessage = await createNewMessage(text, user, chat);
+  await chat.save();
+  return triggerSubscription(user.id, chatId, newMessage);
 }
 
-async function createNewMessage(text, sender, chat) {
-  const message = await Message.create({ text, sender, chat });
+async function createNewMessage(text, user, chat) {
+  const message = await Message.create({ text, sender: user, chat });
   await message.save();
   return message;
-}
-
-export async function getAllMessages(chatId: string) {
-  const chats = await getChatRepo();
-
-  const chatMessages = chats.find(({ id }) => id === chatId);
-  return chatMessages;
-}
-
-async function getChatRepo() {
-  const chatRepo = getRepository(Chat);
-  return await chatRepo.find({
-    relations: ['members', 'messages', 'messages.sender'],
-  });
 }
 
 async function triggerSubscription(senderId, chatId, message) {
@@ -53,9 +43,30 @@ async function triggerSubscription(senderId, chatId, message) {
   return null;
 }
 
-async function getMessages(_, { chatId }) {
-  const messages = await getAllMessages(chatId);
-  return messages;
+async function getMessages(_, { chatId }, { user }: contextType) {
+  if (!user) return returnError('getMessage', UN_AUTHROIZED);
+
+  let chat: Chat[] = await getChatRepo(chatId);
+
+  // if (!chat[0].members.includes(user))
+  //   return returnError('getMessage', UN_AUTHROIZED);
+
+  const messages = chat[0].messages
+    .map(message => {
+      if (message.sender.id === user.id) return { ...message, me: true };
+      return { ...message, me: false };
+    })
+    .reverse();
+
+  return { ...chat[0], messages };
+}
+
+async function getChatRepo(chatId: string) {
+  const chatRepo = getRepository(Chat);
+  return await chatRepo.find({
+    relations: ['members', 'messages', 'messages.sender'],
+    where: { id: chatId },
+  });
 }
 
 function getNewMessages() {
