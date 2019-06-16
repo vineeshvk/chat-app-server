@@ -6,3 +6,4 @@ tmp/
 temp/
 *.log
 src/tests
+src/config/*.json
