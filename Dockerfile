@@ -21,6 +21,7 @@ RUN npm install --production
 
 COPY --from=builder /usr/src/app/build ./
 COPY src/schema/typeDefs.graphql ./schema/typeDefs.graphql
+COPY src/config/chap-app27-firebase-adminsdk-1i7ch-48b0700d0e.json ./config/
 COPY .env ./
 
 EXPOSE 3350

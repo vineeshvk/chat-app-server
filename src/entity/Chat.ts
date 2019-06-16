@@ -15,12 +15,14 @@ export default class Chat extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToMany(type => Message, messages => messages.chat)
+  @OneToMany(type => Message, messages => messages.chat, {
+    onDelete: 'CASCADE',
+  })
   @JoinTable()
   messages: Message[];
 
   @JoinTable()
-  @ManyToMany(type => User, member => member.chats)
+  @ManyToMany(type => User, member => member.chats, { onDelete: 'CASCADE' })
   members: User[];
 
   @Column({ nullable: true })

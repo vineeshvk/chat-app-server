@@ -8,12 +8,13 @@ import User from '../../entity/User';
 const resolvers = {
   Mutation: {
     createChat,
+    deleteChat,
   },
   Query: {
     getChats,
   },
 };
-
+/* -------------------CREATE_CHAT---------------------------- */
 async function createChat(_, { membersId, name }, { user }: contextType) {
   if (!user) return returnError('createChat', UN_AUTHROIZED);
 
@@ -45,16 +46,21 @@ async function getUserObject(membersId: string[]) {
   return members;
 }
 
+/* -------------------GET_CHAT---------------------------- */
+
 async function getChats(_, {}, { user }: contextType) {
   const userR = await getUserRepo(user.id);
-  // const userChats = userR.find(({ id }) => id === user.id);
-  const chats = userR.chats.map(chat => {
-    if (!chat.name) {
+
+  const chats = [];
+  for (let chat of userR.chats) {
+    if (chat.members.length == 1) {
+      await chat.remove();
+    } else if (!chat.name) {
       const mem = chat.members.filter(member => member.id !== user.id)[0];
-      return { ...chat, name: mem.email };
+      chats.push({ ...chat, name: mem.name });
     }
-    return chat;
-  });
+  }
+
   return chats;
 }
 
@@ -67,6 +73,16 @@ async function getUserRepo(userId) {
   });
 
   return user[0];
+}
+
+async function deleteChat(_, { chatId }, { user }: contextType) {
+  const chat = await Chat.findOne({ id: chatId });
+
+  if (!chat) return returnError('deleteChat', 'Chat not found');
+  if (!user) return returnError('deleteChat', UN_AUTHROIZED);
+
+  await chat.remove();
+  return { id: chatId };
 }
 
 export default resolvers;

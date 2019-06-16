@@ -23,9 +23,12 @@ export default class User extends BaseEntity {
   @Column('text')
   password: string;
 
-  @ManyToMany(type => Chat, chat => chat.members)
+  @ManyToMany(type => Chat, chat => chat.members,{onDelete: 'CASCADE'})
   chats: Chat[];
 
-  @OneToMany(type => Message, messages => messages.sender)
+  @OneToMany(type => Message, messages => messages.sender,{onDelete: 'CASCADE'})
   messages: Message[];
+
+  @Column({nullable:true})
+  fcmToken: string;
 }

@@ -5,6 +5,7 @@ import { returnError } from '../../config/errorHandling';
 import { UN_AUTHROIZED } from '../../config/errorMessages';
 import Chat from '../../entity/Chat';
 import Message from '../../entity/Message';
+const FCM = require('fcm-node');
 
 const resolvers = {
   Mutation: {
@@ -20,6 +21,10 @@ const resolvers = {
   },
 };
 
+const serverKey = require('../../config/chap-app27-firebase-adminsdk-1i7ch-48b0700d0e.json');
+
+const fcm = new FCM(serverKey);
+
 async function createMessage(_, { chatId, text }, { user }: contextType) {
   if (!user) return returnError('createMessage', UN_AUTHROIZED);
 
@@ -28,6 +33,29 @@ async function createMessage(_, { chatId, text }, { user }: contextType) {
 
   const newMessage = await createNewMessage(text, user, chat);
   await chat.save();
+
+  const chats = await getChatRepo(chatId);
+  const membersToken = [];
+  chats[0].members.forEach(({ fcmToken }) => {
+    if (fcmToken) membersToken.push(fcmToken);
+  });
+
+  var message = {
+    registration_ids: membersToken,
+    notification: {
+      title: user.name,
+      body: text,
+      sound: 'default',
+    },
+  };
+
+  fcm.send(message, function(err, response) {
+    if (err) {
+      console.log('Something has gone wrong!', err);
+    } else {
+      console.log('Successfully sent with response: ', response);
+    }
+  });
   return triggerSubscription(user.id, chatId, newMessage);
 }
 
@@ -38,7 +66,6 @@ async function createNewMessage(text, user, chat) {
 }
 
 async function triggerSubscription(senderId, chatId, message) {
-  // const chats = await getAllMessages(chatId);
   pubSub.publish(GET_CHAT_SUB, { getNewMessages: message, chatId });
   return null;
 }
@@ -46,22 +73,22 @@ async function triggerSubscription(senderId, chatId, message) {
 async function getMessages(_, { chatId }, { user }: contextType) {
   if (!user) return returnError('getMessage', UN_AUTHROIZED);
 
-  let chat: Chat[] = await getChatRepo(chatId);
+  let chats: Chat[] = await getChatRepo(chatId);
 
-  // if (!chat[0].members.includes(user))
-  //   return returnError('getMessage', UN_AUTHROIZED);
+  if (!chats[0].members.some(({ id }) => id === user.id))
+    return returnError('getMessage', UN_AUTHROIZED);
 
-  const messages = chat[0].messages
+  const messages = chats[0].messages
     .map(message => {
       if (message.sender.id === user.id) return { ...message, me: true };
       return { ...message, me: false };
     })
     .reverse();
 
-  return { ...chat[0], messages };
+  return { chat: { ...chats[0], messages } };
 }
 
-async function getChatRepo(chatId: string) {
+export async function getChatRepo(chatId: string) {
   const chatRepo = getRepository(Chat);
   return await chatRepo.find({
     relations: ['members', 'messages', 'messages.sender'],

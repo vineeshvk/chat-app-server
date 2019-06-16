@@ -17,12 +17,8 @@ export async function startServer(port: number) {
   await connectDB();
 
   server
-    .listen(port)
-    .then(({ url, subscriptionsUrl }) =>
-      console.log(
-        `connected at ${url}...\nsubscription url at ${subscriptionsUrl}`
-      )
-    );
+    .listen(process.env.PORT || port)
+    .then(({ url, subscriptionsUrl }) => console.log(`server is connected`));
 }
 
 const getUser = async (token: string) => {
