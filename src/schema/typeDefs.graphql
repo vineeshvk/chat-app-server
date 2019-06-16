@@ -1,0 +1,69 @@
+type Query {
+  hello(name: String): String
+  getChats: [Chat]
+  getMessages(chatId: String!): ChatRes
+  getUsers: UserRes
+  me: User
+}
+
+type Mutation {
+  register(
+    name: String!
+    email: String!
+    password: String!
+    fcmToken: String
+  ): Response
+  login(email: String!, password: String!, fcmToken: String): Response
+  createChat(membersId: [String]!, name: String): Error!
+  createMessage(chatId: String!, text: String!): Error!
+  deleteChat(chatId: String): Response
+  deleteUser: String
+  shredData(secret: String): String
+  renameUser(name: String): Response
+}
+
+type Subscription {
+  getNewMessages(chatId: String): Message
+}
+
+type UserRes {
+  users: [User]
+  error: Error
+}
+
+type Error {
+  path: String!
+  message: String!
+}
+
+type Response {
+  error: Error
+  token: String
+  id: String
+}
+
+type ChatRes {
+  error: Error
+  chat: Chat
+}
+
+type Chat {
+  id: String
+  members: [User]
+  messages: [Message]
+  name: String
+  lastMessage: String
+}
+
+type Message {
+  id: String
+  text: String
+  sender: User
+  me: Boolean
+}
+
+type User {
+  id: String
+  name: String
+  email: String
+}

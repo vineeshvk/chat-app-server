@@ -1,5 +1,5 @@
 import { startServer } from './tools/startServer';
+import dotenv = require('dotenv');
+dotenv.config();
 
-startServer(4000).then(() => {
-	console.log('running in 4000');
-});
+startServer(3350);

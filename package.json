@@ -1,45 +1,45 @@
 {
-	"name": "server",
-	"version": "0.0.1",
-	"description": "Awesome project developed with TypeORM.",
-	"devDependencies": {
-		"@types/bcrypt": "^3.0.0",
-		"@types/jest": "^23.3.9",
-		"@types/node": "^8.0.29",
-		"@types/yup": "^0.26.1",
-		"jest": "^23.6.0",
-		"ts-jest": "^23.10.4",
-		"ts-node": "3.3.0",
-		"typescript": "2.5.2"
-	},
-	"dependencies": {
-		"apollo-server": "^2.1.0",
-		"bcrypt": "^3.0.2",
-		"gql2ts": "^1.10.1",
-		"graphql": "^14.0.2",
-		"graphql-import": "^0.7.1",
-		"graphql-request": "^1.8.2",
-		"nodemon": "^1.18.5",
-		"pg": "^7.3.0",
-		"reflect-metadata": "^0.1.10",
-		"typeorm": "^0.2.8",
-		"yup": "^0.26.6"
-	},
-	"scripts": {
-		"start": "NODE_ENV=development nodemon --exec ts-node src/index.ts"
-	},
-	"jest": {
-		"transform": {
-			"^.+\\.tsx?$": "ts-jest"
-		},
-		"testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
-		"moduleFileExtensions": [
-			"ts",
-			"tsx",
-			"js",
-			"jsx",
-			"json",
-			"node"
-		]
-	}
+  "name": "server",
+  "version": "0.0.1",
+  "description": "Awesome project developed with TypeORM.",
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/dotenv": "^6.1.1",
+    "@types/jsonwebtoken": "^8.3.2",
+    "@types/lodash": "^4.14.122",
+    "@types/node": "^10.12.18",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.2.2"
+  },
+  "dependencies": {
+    "apollo-server": "^2.1.0",
+    "bcryptjs": "^2.4.3",
+    "core-js": "3.0.0-beta.11",
+    "dotenv": "^7.0.0",
+    "fcm-node": "^1.5.1",
+    "graphql": "^14.0.2",
+    "graphql-import": "^0.7.1",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^7.3.0",
+    "reflect-metadata": "^0.1.10",
+    "typeorm": "^0.2.8"
+  },
+  "scripts": {
+    "start": "NODE_ENV=development nodemon --exec ts-node src/index.ts",
+    "build": "tsc -b"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
 }

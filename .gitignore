@@ -6,4 +6,5 @@ tmp/
 temp/
 *.log
 src/tests
-src/config/*.json
+pgdata/
+src/config/chap-app27-firebase-adminsdk-1i7ch-48b0700d0e.json
