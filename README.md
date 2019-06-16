@@ -10,7 +10,7 @@ https://chapserver.herokuapp.com
 
 ### Flutter app
 
-Checkout the flutter client [Chat app flutter]()
+Checkout the flutter client [Chat app flutter](https://github.com/vineeshvk/chat-app-flutter)
 
 
 ## Features
