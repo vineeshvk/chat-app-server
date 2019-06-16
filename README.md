@@ -1,4 +1,4 @@
-<img src=s>
+<a href="#"><img src=https://github.com/vineeshvk/chat-app-flutter/blob/master/assets/icon/logo.png width=80></a>
 
 # Chap Server
 
