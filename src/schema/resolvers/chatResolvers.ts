@@ -15,8 +15,22 @@ const resolvers = {
   },
 };
 /* -------------------CREATE_CHAT---------------------------- */
-async function createChat(_, { membersId, name }, { user }: contextType) {
+async function createChat(
+  _,
+  { membersId, name }: { membersId: string[]; name: string },
+  { user }: contextType
+) {
   if (!user) return returnError('createChat', UN_AUTHROIZED);
+  if (membersId.length == 1) {
+    const userR = await getUserRepo(user.id);
+
+    for (let chat of userR.chats) {
+      if (chat.members.length == 2) {
+        const chatExist = chat.members.filter(mem => mem.id == membersId[0]);
+        if (chatExist.length >= 1) return null;
+      }
+    }
+  }
 
   const members = await getUserObject(membersId);
 
@@ -31,7 +45,6 @@ async function createNewChat(members: User[], name?: string) {
   if (name) chat.name = name;
 
   await chat.save();
-
   return null;
 }
 
@@ -58,6 +71,8 @@ async function getChats(_, {}, { user }: contextType) {
     } else if (!chat.name) {
       const mem = chat.members.filter(member => member.id !== user.id)[0];
       chats.push({ ...chat, name: mem.name });
+    } else {
+      chats.push(chat);
     }
   }
 

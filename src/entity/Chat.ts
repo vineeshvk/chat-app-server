@@ -1,12 +1,4 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { BaseEntity, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import Message from './Message';
 import User from './User';
 
@@ -30,4 +22,7 @@ export default class Chat extends BaseEntity {
 
   @Column({ nullable: true })
   name: string;
+
+  @UpdateDateColumn()
+  updated:string
 }

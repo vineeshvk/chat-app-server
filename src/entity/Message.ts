@@ -4,6 +4,7 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
+  CreateDateColumn,
 } from 'typeorm';
 import Chat from './Chat';
 import User from './User';
@@ -21,4 +22,9 @@ export default class Message extends BaseEntity {
 
   @ManyToOne(type => Chat, chat => chat.messages,{onDelete: 'CASCADE'})
   chat: Chat;
+
+  @CreateDateColumn()
+	date: string;
+
+
 }

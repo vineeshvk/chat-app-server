@@ -78,12 +78,13 @@ async function getMessages(_, { chatId }, { user }: contextType) {
   if (!chats[0].members.some(({ id }) => id === user.id))
     return returnError('getMessage', UN_AUTHROIZED);
 
-  const messages = chats[0].messages
+  let messages = chats[0].messages
     .map(message => {
       if (message.sender.id === user.id) return { ...message, me: true };
       return { ...message, me: false };
     })
-    .reverse();
+
+    messages.sort((a, b) =>+ (new Date(b.date)) - + (new Date(a.date)));
 
   return { chat: { ...chats[0], messages } };
 }
