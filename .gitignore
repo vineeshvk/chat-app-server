@@ -8,3 +8,4 @@ temp/
 src/tests
 pgdata/
 src/config/chap-app27-firebase-adminsdk-1i7ch-48b0700d0e.json
+.env
