@@ -39,6 +39,10 @@ Checkout the flutter client [Chat app flutter](https://github.com/vineeshvk/chat
 you have to run your postgres server at PORT 5432 then
 
 ```
+cp example.env .env
+```
+
+```
 npm install
 ```
 
