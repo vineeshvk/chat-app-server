@@ -14,7 +14,7 @@ import User from '../../entity/User';
 
 const resolvers = {
   Query: {
-    hello: _ => 'hello',
+    hello: () => 'hello',
     getUsers,
     me,
   },
@@ -60,7 +60,13 @@ async function register(_, { email, password, name, fcmToken }) {
     name,
     fcmToken,
   }).save();
-  const token = sign({ id: user.id }, process.env.JWT_SECRET_TOKEN);
+
+  let token;
+  try {
+    token = sign({ id: user.id }, process.env.JWT_SECRET_TOKEN);
+  } catch (e) {
+    console.error(e)
+  }
 
   return { token, id: user.id };
 }
@@ -73,7 +79,12 @@ async function login(_, { email, password, fcmToken }) {
   const validPassword = await compare(password, userExist.password);
   if (!validPassword) return returnError('password', INVALID_PASSWORD);
 
-  const token = sign({ id: userExist.id }, process.env.JWT_SECRET_TOKEN);
+  let token;
+  try {
+    token = sign({ id: userExist.id }, process.env.JWT_SECRET_TOKEN);
+  } catch (e) {
+    console.error(e);
+  }
 
   if (fcmToken != userExist.fcmToken) {
     userExist.fcmToken = fcmToken;
